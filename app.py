@@ -8,7 +8,6 @@ from transformers import pipeline
 import torch
 import pickle
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
 # Inisialisasi stemmer
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
@@ -19,7 +18,7 @@ def load_kamus_alay():
     try:
         kamus_df = pd.read_csv("kamus-alay.csv", encoding='latin1')
         if 'mbg' not in kamus_df['slang'].values:
-            st.info("Kata 'mbg' sudah dihapus dari kamus alay.")
+            st.info("")
         else:
             st.warning(f"Kata 'mbg' masih ada di kamus alay: {kamus_df[kamus_df['slang'] == 'mbg']}")
         return dict(zip(kamus_df['slang'], kamus_df['formal']))
@@ -95,9 +94,31 @@ if st.button("Prediksi"):
         st.write("**Kalimat setelah dibersihkan:**", kalimat_bersih)
 
         # Prediksi sentimen
+        # label, skor = predict_sentiment(kalimat_bersih)
+        # st.write("**Hasil Prediksi:**")
+        # st.write(f"**Sentimen:** {label}")
+        # st.write(f"**Skor Kepercayaan:** {skor:.2f}")
+        # Prediksi sentimen 
         label, skor = predict_sentiment(kalimat_bersih)
-        st.write("**Hasil Prediksi:**")
-        st.write(f"**Sentimen:** {label}")
-        st.write(f"**Skor Kepercayaan:** {skor:.2f}")
+
+        # Tentukan warna berdasarkan label
+        if label.lower() == "positive" or label.lower() == "positif":
+            bg_color = "#d4edda"  # hijau muda
+            text_color = "#155724"
+        elif label.lower() == "negative" or label.lower() == "negatif":
+            bg_color = "#f8d7da"  # merah muda
+            text_color = "#721c24"
+        else:
+            bg_color = "#ffffff"  # putih
+            text_color = "#000000"
+
+        st.markdown(f"""
+        <div style="background-color:{bg_color}; color:{text_color}; padding: 20px; border-radius: 10px;">
+            <h4>Hasil Prediksi</h4>
+            <p><strong>Sentimen:</strong> {label}</p>
+            <p><strong>Skor Kepercayaan:</strong> {skor:.2f}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
     else:
         st.error("Silakan masukkan kalimat terlebih dahulu!")
