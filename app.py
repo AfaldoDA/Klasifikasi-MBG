@@ -8,9 +8,17 @@ from transformers import pipeline
 import torch
 import pickle
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from PIL import Image
 # Inisialisasi stemmer
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
+
+st.title("Hasil Sentimen Masyarakat terhadap Program MBG")
+st.write("Periode: 01 Januari 2025 s.d. 01 Mei 2025")
+
+# Load dan tampilkan gambar
+image = Image.open("hasilmbg.jpeg")
+st.image(image, caption="Distribusi Sentimen Masyarakat terhadap Program MBG", use_column_width=True)
 
 # Load kamus alay
 @st.cache_data
